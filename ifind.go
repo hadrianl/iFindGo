@@ -372,7 +372,7 @@ func THS_AsyRealtimeQuotes(thscode, jsonIndicator, jsonParam string, bOnlyOnce b
 
 // TODO: this func might not be necessary in golang, m
 func THS_DeleteBuffer(bufptr uintptr) {
-	syscall.Syscall(procAddrs["THS_DeleteBuffer"], uintptr(1), bufptr, 0, 0)
+	syscall.Syscall(procAddrs["THS_DeleteBuffer"], uintptr(1), uintptr(unsafe.Pointer(&bufptr)), 0, 0)
 }
 
 func THS_DataStatistics() []byte {

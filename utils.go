@@ -22,12 +22,24 @@ func s2bp(s string) *byte {
 	return bp
 }
 
-func makeByteSlice(arrPtr uintptr) (bs []byte) {
+func makeByteSlice(arrPtr uintptr) []byte {
+	var buf_c []byte
 	size := int(C.strlen((*C.char)(unsafe.Pointer(arrPtr))))
-	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&bs))
+	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&buf_c))
 	sliceHeader.Cap = size
 	sliceHeader.Len = size
 	sliceHeader.Data = arrPtr
+
+	bs := make([]byte, len(buf_c))
+	// copy buf from C to GO
+	copy(bs, buf_c)
+	THS_DeleteBuffer(arrPtr)
+	return bs
+}
+
+func makeGoString(arrPtr uintptr) (s string) {
+	s = C.GoString((*C.char)(unsafe.Pointer(arrPtr)))
+	THS_DeleteBuffer(arrPtr)
 	return
 }
 
